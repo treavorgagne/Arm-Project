@@ -72,23 +72,20 @@ int main()
 
     // initialize data size 
     int image_size = width*height;
-    rgb_pixel *input_data;
-    input_data = malloc(sizeof(rgb_pixel));
-    ycc_pixel output_data;
-    
-    // read all rgb data into input_data
-    
+    rgb_pixel *input_rbg;
+    input_rbg = malloc(sizeof(rgb_pixel));
+    ycc_pixel output_ycc;
     
     for (int i = 0; i < width; i++){
         for (int j = 0; j < height; j++){
 
-            fread(input_data, sizeof(rgb_pixel), 1, fInput);
+            fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
 
             if (i == 0 && j == 50){
-                printf("Original [%d][%d] RGB: %d %d %d\n", i, j, input_data->red, input_data->green, input_data->blue);
-                output_data = convertRGBtoYCC(input_data->red, input_data->green, input_data->blue);
-                printf("Converted [%d][%d] YCC: %f %f %f\n",i, j, output_data.y, output_data.cb, output_data.cr);
-                convertYCCtoRGB(output_data.y, output_data.cb, output_data.cr);
+                printf("Original [%d][%d] RGB: %d %d %d\n", i, j, input_rbg->red, input_rbg->green, input_rbg->blue);
+                output_ycc = convertRGBtoYCC(input_rbg->red, input_rbg->green, input_rbg->blue);
+                printf("Converted [%d][%d] YCC: %f %f %f\n",i, j, output_ycc.y, output_ycc.cb, output_ycc.cr);
+                convertYCCtoRGB(output_ycc.y, output_ycc.cb, output_ycc.cr);
             }
         }
     }
