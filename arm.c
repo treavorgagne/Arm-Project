@@ -26,7 +26,7 @@ typedef struct rgb_image {
 ycc_pixel convertRGBtoYCC(uint8_t R, uint8_t G, uint8_t B){
     ycc_pixel YCC;
 
-    float y  = (float)(16 + (0.257 * R) +( 0.587 * G) + (0.098 * B));
+    float y  = (float)(16 + (0.257 * R) +( 0.504 * G) + (0.098 * B));
     float cb = (float)(128 + (-0.148 * R) - (0.291 * G) + (0.439 * B));
     float cr = (float)(128 + (0.439 * R) - (0.368 * G) - (0.071 * B));
 
@@ -37,21 +37,43 @@ ycc_pixel convertRGBtoYCC(uint8_t R, uint8_t G, uint8_t B){
     return YCC;
 }
 
+rgb_pixel convertYCCtoRGB(float Y, float Cb, float Cr){
+    rgb_pixel RGB;
+    float Yp = Y - 16;
+    float Cbp = Cb - 128;
+    float Crp = Cr - 128;
+    float r = (float) ((1.164 * Yp) + (1.596*Crp));
+    float g = (float) ((1.164 * Yp) - (0.813*Crp) - (0.391*Cbp));
+    float b = (float) ((1.164 * Yp) + (2.018*Cbp));
+
+    RGB.red = r;
+    RGB.green = g;
+    RGB.blue = b;
+    
+    printf("Reverted RGB: %f %f %f\n", r, g, b);
+}
+
 
 
 int main()
 {
     // open file in binary read mode
-    FILE *fptr;
-    if ((fptr = fopen("./test-input.bmp","rb")) == NULL){
+    FILE *fInput;
+    if ((fInput = fopen("./test-input.bmp","rb")) == NULL){
        printf("Error! opening file");
        exit(1);
-   }
+    }
+
+    FILE *fOutput;
+    if ((fOutput = fopen("./test-output.bmp","w")) == NULL){
+       printf("Error! opening file");
+       exit(1);
+    }
 
     // skip header of jpg file
     int header_size = 54;
-    // fread(, header_size, header_size, fptr);
-    fseek( fptr, header_size, SEEK_SET );
+    // fread(, header_size, header_size, fInput);
+    fseek( fInput, header_size, SEEK_SET );
     // TODO get width and heigth from header
     
     int width = 400;
@@ -68,13 +90,18 @@ int main()
     output_data->data = malloc(sizeof(ycc_pixel)*image_size);
     
     // read all rgb data into input_data
-    fread(input_data->data, sizeof(rgb_pixel), image_size, fptr);
+    fread(input_data->data, sizeof(rgb_pixel), image_size, fInput);
     
     for (int i = 0; i < width; i++){
         for (int j = 0; j < height; j++){
             int offset = i*width;
             output_data->data[offset+j] = convertRGBtoYCC(input_data->data[offset+j].red,input_data->data[offset+j].green,input_data->data[offset+j].blue);
-            printf("[%d][%d] YCC: %f %f %f\n",i,j, output_data->data[offset+j].y, output_data->data[offset+j].cb, output_data->data[offset+j].cr);
+            if (i == 0 && j == 30){
+                convertYCCtoRGB(output_data->data[offset+j].y,output_data->data[offset+j].cb, output_data->data[offset+j].cr);
+                printf("Original [%d][%d] RGB: %d %d %d\n",i,j, input_data->data[offset+j].red, input_data->data[offset+j].green, input_data->data[offset+j].blue);
+                printf("Converted [%d][%d] YCC: %f %f %f\n",i,j, output_data->data[offset+j].y, output_data->data[offset+j].cb, output_data->data[offset+j].cr);
+                //printf("Reverted [%d][%d] RGB: %d %d %d\n",i,j, test.red, test.green, test.blue);
+            }
         }
     }
 
