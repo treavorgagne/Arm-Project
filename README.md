@@ -11,3 +11,8 @@ Git access token:
 ```
 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
 ```
+
+To compile c and get assembly (use the following)
+```
+arm-linux-gcc -static -S addition.c
+```
