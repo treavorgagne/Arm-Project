@@ -62,6 +62,28 @@ bmp_header* bmp_init(FILE* fp){
     return header;
 }
 
+void print_bmp_header(bmp_header* header, FILE* out){
+
+  fwrite(&header->bfType, sizeof(uint16_t), 1, out);
+  fwrite(&header->bfSize, sizeof(uint32_t), 1, out);
+  fwrite(&header->bfReserved1, sizeof(uint16_t), 1, out);
+  fwrite(&header->bfReserved2, sizeof(uint16_t), 1, out);
+  fwrite(&header->bfOffBits, sizeof(uint32_t), 1, out);
+
+  fwrite(&header->biSize, sizeof(uint32_t), 1, out);
+  fwrite(&header->biWidth, sizeof(uint32_t), 1, out);
+  fwrite(&header->biHeight, sizeof(uint32_t), 1, out);
+  fwrite(&header->biPlanes, sizeof(uint16_t), 1, out);
+  fwrite(&header->biBitCount, sizeof(uint16_t), 1, out);
+  fwrite(&header->biCompression, sizeof(uint32_t), 1, out);
+  fwrite(&header->biSizeImage, sizeof(uint32_t), 1, out);
+  fwrite(&header->biXPelsPerMeter, sizeof(uint32_t), 1, out);
+  fwrite(&header->biYPelsPerMeter, sizeof(uint32_t), 1, out);
+  fwrite(&header->biClrUsed, sizeof(uint32_t), 1, out);
+  fwrite(&header->biClrImportant, sizeof(uint32_t), 1, out);
+
+}
+
 ycc_pixel* convertRGBtoYCC(rgb_pixel *input){
     ycc_pixel *YCC = malloc(sizeof(ycc_pixel));
 
@@ -104,13 +126,13 @@ int main()
 {
     // open file in binary read mode
     FILE *fInput;
-    if ((fInput = fopen("./dog10.bmp","rb")) == NULL){
+    if ((fInput = fopen("./dog100.bmp","rb")) == NULL){
        printf("Error! Opening input file");
        exit(1);
     }
 
     FILE *fOutput;
-    if ((fOutput = fopen("./test-output.bmp","wb")) == NULL){
+    if ((fOutput = fopen("./output.bmp","wb")) == NULL){
        printf("Error! Opening Output file");
        exit(1);
     }
@@ -123,46 +145,47 @@ int main()
     int header_size = 54;
     char* buffer[54];  
     fread(buffer, file_header->bfOffBits, 1, fInput);
-    fwrite(file_header, file_header->bfOffBits, 1, fOutput);
+    // fwrite(file_header, file_header->bfOffBits, 1, fOutput);
+    print_bmp_header(file_header,fOutput);
     fseek (fOutput, file_header->bfOffBits, SEEK_SET);
-    
-    // fseek( fInput, header_size, SEEK_SET );
+    fseek( fInput, file_header->bfOffBits, SEEK_SET );
     // // TODO get width and heigth from header
     
-    // int width = file_header->biWidth;
-    // int height = file_header->biHeight;
+    int width = file_header->biWidth;
+    int height = file_header->biHeight;
 
     // // initialize data size 
-    // rgb_pixel *input_rbg;
+    rgb_pixel *input_rbg;
     // rgb_pixel *input_rbg_tr;
     // rgb_pixel *input_rbg_bl;
     // rgb_pixel *input_rbg_br;
-    // input_rbg = malloc(sizeof(rgb_pixel));
+    input_rbg = malloc(sizeof(rgb_pixel));
 
-    // ycc_pixel *output_ycc;
+    ycc_pixel *output_ycc;
     
     // printf("Size of RGB: %d\n", sizeof(rgb_pixel) );
-    // for (int i = 0; i < width; i++){
-    //     for (int j = 0; j < height; j++){
+    for (int i = 0; i < 100; i++){
+        for (int j = 0; j < 100; j++){
 
-    //         fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
-    //         // fread(input_rbg_tr, sizeof(rgb_pixel), 1, fInput);
-    //         // fseek( fInput, width - 2, SEEK_CUR );
-    //         // fread(input_rbg_bl, sizeof(rgb_pixel), 1, fInput);
-    //         // fread(input_rbg_br, sizeof(rgb_pixel), 1, fInput);
-    //         // fseek( fInput, (-width), SEEK_CUR );
-    //         output_ycc = convertRGBtoYCC(input_rbg);
-    //         if (i == 2 && j == 50){
-    //             //Test pixel output
-    //             printf("Pixel [%d][%d]: %d %d %d\n", i , j, input_rbg->red, input_rbg->green, input_rbg->blue);
-    //             printf("Converted [%d][%d] YCC: %d %d %d\n",i, j, output_ycc->y, output_ycc->cb, output_ycc->cr);
-    //             convertYCCtoRGB(output_ycc->y, output_ycc->cb, output_ycc->cr);
-    //         }
+            fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
+            // fread(input_rbg_tr, sizeof(rgb_pixel), 1, fInput);
+            // fseek( fInput, width - 2, SEEK_CUR );
+            // fread(input_rbg_bl, sizeof(rgb_pixel), 1, fInput);
+            // fread(input_rbg_br, sizeof(rgb_pixel), 1, fInput);
+            // fseek( fInput, (-width), SEEK_CUR );
+            output_ycc = convertRGBtoYCC(input_rbg);
+            printf("Converted [%d][%d] YCC: %d %d %d\n",i, j, output_ycc->y, output_ycc->cb, output_ycc->cr);
+            // if (i == 2 && j == 50){
+            //     //Test pixel output
+            //     printf("Pixel [%d][%d]: %d %d %d\n", i , j, input_rbg->red, input_rbg->green, input_rbg->blue);
+            //     printf("Converted [%d][%d] YCC: %d %d %d\n",i, j, output_ycc->y, output_ycc->cb, output_ycc->cr);
+            //     convertYCCtoRGB(output_ycc->y, output_ycc->cb, output_ycc->cr);
+            // }
 
-    //         // ouput to file
-    //         fwrite(output_ycc, sizeof(ycc_pixel), 1, fOutput);
-    //     }
-    // }
+            // ouput to file
+            fwrite(output_ycc, sizeof(ycc_pixel), 1, fOutput);
+        }
+    }
 
     // todo output
 
