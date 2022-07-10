@@ -118,6 +118,9 @@ rgb_pixel *convertYCCtoRGB(float Y, float Cb, float Cr)
 ycc_pixel *downsample(ycc_pixel *a, ycc_pixel *b, ycc_pixel *c, ycc_pixel *d)
 {
     ycc_pixel *result = (ycc_pixel *)malloc(sizeof(ycc_pixel));
+
+    // for division /4 use >> 2
+
     float y_avg = (a->y + b->y + c->y + d->y) / 4;
     float cb_avg = (a->cb + b->cb + c->cb + d->cb) / 4;
     float cr_avg = (a->cr + b->cr + c->cr + d->cr) / 4;
@@ -179,7 +182,7 @@ int main( int argc, char *argv[] )
 
     // printf("Size of RGB: %d\n", sizeof(rgb_pixel) );
     int iterations = file_header->Width * file_header->Height;
-    for (int i = 0; i < iterations; i++)
+    for (int i = iterations; i; i--)
     {
 
         fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
