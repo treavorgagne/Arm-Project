@@ -184,9 +184,8 @@ int main( int argc, char *argv[] )
     int iterations = file_header->Width * file_header->Height;
     for (int i = iterations; i; i--)
     {
-
+        //Read the input file 24 bits at a time and split them into Red, Green, and Blue
         fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
-        // fwrite(input_rbg, sizeof(rgb_pixel), 1, fOutput);
         output_ycc = convertRGBtoYCC(input_rbg);
         output_rgb = convertYCCtoRGB(output_ycc->y, output_ycc->cb, output_ycc->cr);
         if (i < 400)
