@@ -3,3 +3,5 @@ vmlinuz-4.18.16-300.fc29.armv7hl
 initramfs-4.18.16-300.fc29.armv7hl.img
 *.exe
 test-output.bmp
+
+output/*
