@@ -5,6 +5,7 @@
 
 typedef struct rgb_pixel
 {
+
     uint8_t red;
     uint8_t green;
     uint8_t blue;
@@ -28,7 +29,6 @@ typedef struct bmp_header
 
     // Image header
     uint32_t biSize;
-    ;
     uint32_t biWidth;
     uint32_t biHeight;
     uint16_t biPlanes;
@@ -65,28 +65,6 @@ bmp_header *bmp_init(FILE *fp)
     fread(&header->biClrUsed, sizeof(uint32_t), 1, fp);
     fread(&header->biClrImportant, sizeof(uint32_t), 1, fp);
     return header;
-}
-
-void print_bmp_header(bmp_header *header, FILE *out)
-{
-
-    fwrite(&header->bfType, sizeof(uint16_t), 1, out);
-    fwrite(&header->bfSize, sizeof(uint32_t), 1, out);
-    fwrite(&header->bfReserved1, sizeof(uint16_t), 1, out);
-    fwrite(&header->bfReserved2, sizeof(uint16_t), 1, out);
-    fwrite(&header->bfOffBits, sizeof(uint32_t), 1, out);
-
-    fwrite(&header->biSize, sizeof(uint32_t), 1, out);
-    fwrite(&header->biWidth, sizeof(uint32_t), 1, out);
-    fwrite(&header->biHeight, sizeof(uint32_t), 1, out);
-    fwrite(&header->biPlanes, sizeof(uint16_t), 1, out);
-    fwrite(&header->biBitCount, sizeof(uint16_t), 1, out);
-    fwrite(&header->biCompression, sizeof(uint32_t), 1, out);
-    fwrite(&header->biSizeImage, sizeof(uint32_t), 1, out);
-    fwrite(&header->biXPelsPerMeter, sizeof(uint32_t), 1, out);
-    fwrite(&header->biYPelsPerMeter, sizeof(uint32_t), 1, out);
-    fwrite(&header->biClrUsed, sizeof(uint32_t), 1, out);
-    fwrite(&header->biClrImportant, sizeof(uint32_t), 1, out);
 }
 
 ycc_pixel *convertRGBtoYCC(rgb_pixel *input)
@@ -149,20 +127,34 @@ int main()
     bmp_header *file_header;
     file_header = bmp_init(fInput);
     printf("Width, Height: %d, %d\n", file_header->biWidth, file_header->biHeight);
-    printf("Offset %d\n", file_header->bfOffBits);
+    // printf("Compression %d\n", file_header->biClrUsed);
 
     // add header to file
     int header_size = 54;
     char *buffer[54];
     // fread(buffer, file_header->bfOffBits, 1, fInput);
-    fwrite(file_header, sizeof(bmp_header), 1, fOutput);
+    // fwrite(file_header, sizeof(bmp_header), 1, fOutput);
+    fwrite(&file_header->bfType, sizeof(uint16_t), 1, fOutput);
+    fwrite(&file_header->bfSize, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->bfReserved1, sizeof(uint16_t), 1, fOutput);
+    fwrite(&file_header->bfReserved2, sizeof(uint16_t), 1, fOutput);
+    fwrite(&file_header->bfOffBits, sizeof(uint32_t), 1, fOutput);
+
+    fwrite(&file_header->biSize, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biWidth, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biHeight, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biPlanes, sizeof(uint16_t), 1, fOutput);
+    fwrite(&file_header->biBitCount, sizeof(uint16_t), 1, fOutput);
+    fwrite(&file_header->biCompression, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biSizeImage, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biXPelsPerMeter, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biYPelsPerMeter, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biClrUsed, sizeof(uint32_t), 1, fOutput);
+    fwrite(&file_header->biClrImportant, sizeof(uint32_t), 1, fOutput);
     // print_bmp_header(file_header, fOutput);
     // fseek(fOutput, file_header->bfOffBits, SEEK_SET);
     fseek(fInput, file_header->bfOffBits, SEEK_SET);
     // // TODO get width and heigth from header
-
-    int width = file_header->biWidth;
-    int height = file_header->biHeight;
 
     // // initialize data size
     rgb_pixel *input_rbg;
@@ -174,24 +166,26 @@ int main()
     ycc_pixel *output_ycc;
 
     // printf("Size of RGB: %d\n", sizeof(rgb_pixel) );
-    for (int i = 0; i < width; i++)
+    int iterations = file_header->biWidth * file_header->biHeight;
+    for (int i = 0; i < iterations; i++)
     {
-        for (int j = 0; j < height; j++)
+
+        fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
+        // fwrite(input_rbg, sizeof(rgb_pixel), 1, fOutput);
+        output_ycc = convertRGBtoYCC(input_rbg);
+        if (i < 400)
         {
-
-            fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
-            output_ycc = convertRGBtoYCC(input_rbg);
-            if (i == 40 && j == 199)
-            {
-                // Test pixel output
-                printf("Pixel [%d][%d]: %d %d %d\n", i, j, input_rbg->red, input_rbg->green, input_rbg->blue);
-                printf("Converted [%d][%d] YCC: %d %d %d\n", i, j, output_ycc->y, output_ycc->cb, output_ycc->cr);
-                convertYCCtoRGB(output_ycc->y, output_ycc->cb, output_ycc->cr);
-            }
-
-            // // ouput to file
-            fwrite(output_ycc, sizeof(ycc_pixel), 1, fOutput);
+            // Test pixel output
+            printf("Pixel [%d]: %d %d %d\n", i, input_rbg->red, input_rbg->green, input_rbg->blue);
+            printf("Converted [%d] YCC: %d %d %d\n", i, output_ycc->y, output_ycc->cb, output_ycc->cr);
+            convertYCCtoRGB(output_ycc->y, output_ycc->cb, output_ycc->cr);
         }
+
+        // // // ouput to file
+        // // fwrite(&input_rbg->red, sizeof(uint8_t), 1, fOutput);
+        // // fwrite(&input_rbg->green, sizeof(uint8_t), 1, fOutput);
+        // // fwrite(&input_rbg->blue, sizeof(uint8_t), 1, fOutput);
+        fwrite(output_ycc, sizeof(ycc_pixel), 1, fOutput);
     }
 
     // todo output
