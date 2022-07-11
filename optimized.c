@@ -134,8 +134,8 @@ int main( int argc, char *argv[] )
 {
 
     // exit program if not enough or to much input files was supplied.
-    if (argc != 2) {
-        printf("Please provide 1 file .bmp file to convert to RGB to YCC.");
+    if (argc != 4) {
+        printf("Please provide the correct arguments for RGB to YCC conversion.\n");
         exit(1);
     }
     
@@ -143,21 +143,21 @@ int main( int argc, char *argv[] )
     FILE *fInput;
     if ((fInput = fopen(argv[1], "rb")) == NULL)
     {
-        printf("Error! Opening input file");
+        printf("Error! Opening input file\n");
         exit(1);
     }
 
     // open files for writing the output
     FILE *yccOutputFile;
     FILE *rgbOutputFIle;
-    if ((yccOutputFile = fopen("./output/ycc_output_optimized.bmp", "wb")) == NULL)
+    if ((yccOutputFile = fopen(argv[2], "wb")) == NULL)
     {
-        printf("Error! Opening Output file");
+        printf("Error! Opening Output file\n");
         exit(1);
     }
-    if ((rgbOutputFIle = fopen("./output/rgb_output_optimized.bmp", "wb")) == NULL)
+    if ((rgbOutputFIle = fopen(argv[3], "wb")) == NULL)
     {
-        printf("Error! Opening Output file");
+        printf("Error! Opening Output file\n");
         exit(1);
     }
 
@@ -188,13 +188,13 @@ int main( int argc, char *argv[] )
         fread(input_rbg, sizeof(rgb_pixel), 1, fInput);
         output_ycc = convertRGBtoYCC(input_rbg);
         output_rgb = convertYCCtoRGB(output_ycc->y, output_ycc->cb, output_ycc->cr);
-        if (i < 400)
-        {
-            // Test pixel output
-            printf("Pixel [%d]: %d %d %d\n", i, input_rbg->red, input_rbg->green, input_rbg->blue);
-            printf("Converted [%d] RGB tp YCC: %d %d %d\n", i, output_ycc->y, output_ycc->cb, output_ycc->cr);
-            printf("Reverted [%d] YCC to RGB: %d %d %d\n", i, output_rgb->red, output_rgb->green, output_rgb->blue);
-        }
+        // if (i < 400)
+        // {
+        //     // Test pixel output
+        //     printf("Pixel [%d]: %d %d %d\n", i, input_rbg->red, input_rbg->green, input_rbg->blue);
+        //     printf("Converted [%d] RGB tp YCC: %d %d %d\n", i, output_ycc->y, output_ycc->cb, output_ycc->cr);
+        //     printf("Reverted [%d] YCC to RGB: %d %d %d\n", i, output_rgb->red, output_rgb->green, output_rgb->blue);
+        // }
 
         //Write YCC
         fwrite(output_ycc, sizeof(ycc_pixel), 1, yccOutputFile);

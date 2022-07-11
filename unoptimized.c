@@ -131,8 +131,8 @@ int main( int argc, char *argv[] )
 {
 
     // exit program if not enough or to much input files was supplied.
-    if (argc != 2) {
-        printf("Please provide 1 file .bmp file to convert to RGB to YCC.");
+    if (argc != 4) {
+        printf("Please provide the correct arguments for RGB to YCC conversion.\n");
         exit(1);
     }
     
@@ -147,14 +147,14 @@ int main( int argc, char *argv[] )
     // open files for writing the output
     FILE *yccOutputFile;
     FILE *rgbOutputFIle;
-    if ((yccOutputFile = fopen("./output/ycc_output.bmp", "wb")) == NULL)
+    if ((yccOutputFile = fopen(argv[2], "wb")) == NULL)
     {
-        printf("Error! Opening Output file");
+        printf("Error! Opening Output file\n");
         exit(1);
     }
-    if ((rgbOutputFIle = fopen("./output/rgb_output.bmp", "wb")) == NULL)
+    if ((rgbOutputFIle = fopen(argv[3], "wb")) == NULL)
     {
-        printf("Error! Opening Output file");
+        printf("Error! Opening Output file\n");
         exit(1);
     }
 
