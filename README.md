@@ -12,7 +12,12 @@ Git:
 https://github.com/treavorgagne/Arm-Project.git
 ```
 
-To compile c and get assembly (use the following)
+To compile c and output assembly (use the following)
 ```
 arm-linux-gcc -static -S addition.c
+```
+
+To Run Test Bench call the following in the root directory of the repo.
+```
+python(3) test_bench.py
 ```

@@ -9,9 +9,7 @@ def main():
     inputFiles = [f for f in listdir('./images') if isfile(join('./images', f))]
     print("inputfiles: ",inputFiles)
 
-    call(["rm", "./output/*"])
-    call(["rm", "optimized.exe"])
-    call(["rm", "unoptimized.exe"])
+    call(["rm", "-f", "./output/*"])
     call(["gcc", "-o", "optimized", "optimized.c"])
     call(["gcc", "-o", "unoptimized", "unoptimized.c"])
 
