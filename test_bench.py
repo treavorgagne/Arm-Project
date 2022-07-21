@@ -13,6 +13,7 @@ def main():
     call(["gcc", "-o", "unoptimized", "unoptimized2.c"])
     call(["gcc", "-marm" , "-O3",  "-o", "optimized", "optimized.c"])
     
+    
 
     t0 = time.time()
     for input in inputFiles:
