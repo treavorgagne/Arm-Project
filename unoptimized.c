@@ -138,7 +138,7 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     return YCC;
 }
 
-int roung(float input)
+int myRound(float input)
 {
   if(input > 255)
   {
@@ -148,7 +148,7 @@ int roung(float input)
     return 0;
   } else 
   {
-    return (uint8_t) input;
+    return (uint8_t)input;
   }
 }
 
@@ -159,30 +159,30 @@ rgb_pixel *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
     float Yp = input->y_tl - 16;
     float Cbp = input->cb - 128;
     float Crp = input->cr - 128;
-    RGB->red = roung((1.164 * Yp) + (1.596 * Crp));
-    RGB->green = roung((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
-    RGB->blue = roung((1.164 * Yp) + (2.018 * Cbp));
+    RGB->red = myRound((1.164 * Yp) + (1.596 * Crp));
+    RGB->green = myRound((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
+    RGB->blue = myRound((1.164 * Yp) + (2.018 * Cbp));
 
     fwrite(RGB, sizeof(rgb_pixel), 1, output);
 
     Yp = input->y_tr - 16;
-    RGB->red = roung((1.164 * Yp) + (1.596 * Crp));
-    RGB->green = roung((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
-    RGB->blue = roung((1.164 * Yp) + (2.018 * Cbp));
+    RGB->red = myRound((1.164 * Yp) + (1.596 * Crp));
+    RGB->green = myRound((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
+    RGB->blue = myRound((1.164 * Yp) + (2.018 * Cbp));
     fwrite(RGB, sizeof(rgb_pixel), 1, output);
 
     fseek(output, width*sizeof(rgb_pixel), SEEK_CUR);
 
     Yp = input->y_bl - 16;
-    RGB->red = roung((1.164 * Yp) + (1.596 * Crp));
-    RGB->green = roung((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
-    RGB->blue = roung((1.164 * Yp) + (2.018 * Cbp));
+    RGB->red = myRound((1.164 * Yp) + (1.596 * Crp));
+    RGB->green = myRound((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
+    RGB->blue = myRound((1.164 * Yp) + (2.018 * Cbp));
     fwrite(RGB, sizeof(rgb_pixel), 1, output);
 
     Yp = input->y_br - 16;
-    RGB->red = roung((1.164 * Yp) + (1.596 * Crp));
-    RGB->green = roung((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
-    RGB->blue = roung((1.164 * Yp) + (2.018 * Cbp));
+    RGB->red = myRound((1.164 * Yp) + (1.596 * Crp));
+    RGB->green = myRound((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
+    RGB->blue = myRound((1.164 * Yp) + (2.018 * Cbp));
     fwrite(RGB, sizeof(rgb_pixel), 1, output);
     fseek(output, -width*sizeof(rgb_pixel), SEEK_CUR);
 }
