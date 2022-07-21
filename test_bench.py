@@ -11,9 +11,7 @@ def main():
 
     call(["rm", "-f", "./output/*"])
     call(["gcc", "-o", "unoptimized", "unoptimized2.c"])
-    call(["gcc", "-marm" , "-O3",  "-o", "optimized", "optimized.c"])
-    
-    
+    call(["gcc", "-marm" , "-O1",  "-o", "optimized", "optimized.c"])
 
     t0 = time.time()
     for input in inputFiles:
