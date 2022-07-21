@@ -10,8 +10,8 @@ def main():
     print("inputfiles: ",inputFiles)
 
     call(["rm", "-f", "./output/*"])
-    call(["gcc", "-marm" , "-O1", "-o", "unoptimized", "unoptimized2.c"])
-    call(["gcc", "-marm" , "-O1",  "-o", "optimized", "optimized.c"])
+    call(["gcc", "-marm" , "-O2", "-o", "unoptimized", "unoptimized2.c"])
+    call(["gcc", "-marm" , "-O2",  "-o", "optimized", "optimized.c"])
     
 
     t0 = time.time()
