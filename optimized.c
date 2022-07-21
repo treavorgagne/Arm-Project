@@ -264,7 +264,7 @@ int main( int argc, char *argv[] )
             //     printf("Pixel [%d]: %d %d %d\n", i, input_rbg_tl->red, input_rbg_tl->green, input_rbg_tl->blue);
             //     printf("Converted [%d] RGB to YCC: %d %d %d\n", i, output_ycc->y_tl, output_ycc->cb, output_ycc->cr);
             // }
-            upsampleYCCtoRGB(output_ycc,rgbOutputFile, width);
+            // upsampleYCCtoRGB(output_ycc,rgbOutputFile, width);
 
             // if (i < 400)
             // {
