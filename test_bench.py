@@ -10,7 +10,7 @@ def main():
     print("inputfiles: ",inputFiles)
 
     call(["rm", "-f", "./output/*"])
-    call(["gcc", "-marm" , "-O3", "-o", "unoptimized", "unoptimized2.c"])
+    call(["gcc", "-o", "unoptimized", "unoptimized2.c"])
     call(["gcc", "-marm" , "-O3",  "-o", "optimized", "optimized.c"])
     
 
