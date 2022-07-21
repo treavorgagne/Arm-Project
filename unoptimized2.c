@@ -218,7 +218,7 @@ int main( int argc, char *argv[] )
 
     bmp_header *file_header;
     file_header = bmp_init(fInput);
-    printf("Width, Height: %d, %d\n", file_header->Width, file_header->Height);
+    // printf("Width, Height: %d, %d\n", file_header->Width, file_header->Height);
 
     // add header to file
     write_header(file_header, yccOutputFile);
