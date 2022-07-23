@@ -254,7 +254,7 @@ int main( int argc, char *argv[] )
     int height = header->Height;
 
     for (int i = width; i; i-=4){
-        for (int j = height; j; j-=4){
+        for (int j = height; j; j-=2){
 
             //Read 4 rgb pixels for downsampling
             fread(input_rbg_tl, sizeof(rgb_pixel), 1, fInput);
