@@ -53,53 +53,52 @@ typedef struct file_header
 
 file_header *read_header(FILE *fp)
 {
-
     file_header *header = malloc(sizeof(struct file_header));
 
-    fread(&header->Type, sizeof(uint16_t), 1, fp);
-    fread(&header->FileSize, sizeof(uint32_t), 1, fp);
-    fread(&header->Reserved1, sizeof(uint16_t), 1, fp);
-    fread(&header->Reserved2, sizeof(uint16_t), 1, fp);
-    fread(&header->OffBits, sizeof(uint32_t), 1, fp);
+    fread(&header->Type, 2, 1, fp);
+    fread(&header->FileSize, 4, 1, fp);
+    fread(&header->Reserved1, 2, 1, fp);
+    fread(&header->Reserved2, 2, 1, fp);
+    fread(&header->OffBits, 4, 1, fp);
 
-    fread(&header->Size, sizeof(uint32_t), 1, fp);
-    fread(&header->Width, sizeof(uint32_t), 1, fp);
-    fread(&header->Height, sizeof(uint32_t), 1, fp);
-    fread(&header->Planes, sizeof(uint16_t), 1, fp);
-    fread(&header->BitCount, sizeof(uint16_t), 1, fp);
-    fread(&header->Compression, sizeof(uint32_t), 1, fp);
-    fread(&header->SizeImage, sizeof(uint32_t), 1, fp);
-    fread(&header->XPixelsPerMeter, sizeof(uint32_t), 1, fp);
-    fread(&header->YPixelsPerMeter, sizeof(uint32_t), 1, fp);
-    fread(&header->ClrUsed, sizeof(uint32_t), 1, fp);
-    fread(&header->ClrImportant, sizeof(uint32_t), 1, fp);
+    fread(&header->Size, 4, 1, fp);
+    fread(&header->Width, 4, 1, fp);
+    fread(&header->Height, 4, 1, fp);
+    fread(&header->Planes, 2, 1, fp);
+    fread(&header->BitCount, 2, 1, fp);
+    fread(&header->Compression, 4, 1, fp);
+    fread(&header->SizeImage, 4, 1, fp);
+    fread(&header->XPixelsPerMeter, 4, 1, fp);
+    fread(&header->YPixelsPerMeter, 4, 1, fp);
+    fread(&header->ClrUsed, 4, 1, fp);
+    fread(&header->ClrImportant, 4, 1, fp);
     return header;
 }
 
 void write_header(file_header *header, FILE *output_file)
 {
-    fwrite(&header->Type, sizeof(uint16_t), 1, output_file);
-    fwrite(&header->FileSize, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->Reserved1, sizeof(uint16_t), 1, output_file);
-    fwrite(&header->Reserved2, sizeof(uint16_t), 1, output_file);
-    fwrite(&header->OffBits, sizeof(uint32_t), 1, output_file);
+    fwrite(&header->Type, 2, 1, output_file);
+    fwrite(&header->FileSize, 4, 1, output_file);
+    fwrite(&header->Reserved1, 2, 1, output_file);
+    fwrite(&header->Reserved2, 2, 1, output_file);
+    fwrite(&header->OffBits, 4, 1, output_file);
 
-    fwrite(&header->Size, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->Width, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->Height, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->Planes, sizeof(uint16_t), 1, output_file);
-    fwrite(&header->BitCount, sizeof(uint16_t), 1, output_file);
-    fwrite(&header->Compression, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->SizeImage, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->XPixelsPerMeter, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->YPixelsPerMeter, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->ClrUsed, sizeof(uint32_t), 1, output_file);
-    fwrite(&header->ClrImportant, sizeof(uint32_t), 1, output_file);
+    fwrite(&header->Size, 4, 1, output_file);
+    fwrite(&header->Width, 4, 1, output_file);
+    fwrite(&header->Height, 4, 1, output_file);
+    fwrite(&header->Planes, 2, 1, output_file);
+    fwrite(&header->BitCount, 2, 1, output_file);
+    fwrite(&header->Compression, 4, 1, output_file);
+    fwrite(&header->SizeImage, 4, 1, output_file);
+    fwrite(&header->XPixelsPerMeter, 4, 1, output_file);
+    fwrite(&header->YPixelsPerMeter, 4, 1, output_file);
+    fwrite(&header->ClrUsed, 4, 1, output_file);
+    fwrite(&header->ClrImportant, 4, 1, output_file);
 }
 
 ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb_pixel *input_bl, rgb_pixel *input_br)
 {
-    ycc_compressed *YCC = malloc(sizeof(ycc_pixel));
+    ycc_compressed *YCC = malloc(3);
 
     // extract ys and cs
     int y_tl = (16 + (((16843 * input_tl->red) + (33030 * input_tl->green) + (6423 * input_tl->blue)) >> 16) );
@@ -138,7 +137,7 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     return YCC;
 }
 
-int myRound(float input)
+int myRound(register int input)
 {
   if(input > 255)
   {
@@ -152,9 +151,9 @@ int myRound(float input)
   }
 }
 
-rgb_pixel *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
+void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
 {
-    rgb_pixel *RGB = malloc(sizeof(rgb_pixel));
+    rgb_pixel *RGB = malloc(3);
 
     int Yp = 4882170 * (input->y_tl - 16);
     int Crp = input->cr - 128;
@@ -164,33 +163,32 @@ rgb_pixel *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
     int Cbp1 = (1639973 * Cbp);
     int Cbp2 = (8464105 * Cbp);
 
-
     RGB->red = myRound((Yp + Crp1) >> 22);
     RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
 
-    fwrite(RGB, sizeof(rgb_pixel), 1, output);
+    fwrite(RGB, 3, 1, output);
 
     Yp = 4882170 * (input->y_tr - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
     RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
-    fwrite(RGB, sizeof(rgb_pixel), 1, output);
+    fwrite(RGB, 3, 1, output);
 
-    fseek(output, width*sizeof(rgb_pixel), SEEK_CUR);
+    fseek(output, width*3, SEEK_CUR);
 
     Yp = 4882170 * (input->y_bl - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
     RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
-    fwrite(RGB, sizeof(rgb_pixel), 1, output);
+    fwrite(RGB, 3, 1, output);
 
     Yp = 4882170 * (input->y_br - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
     RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
-    fwrite(RGB, sizeof(rgb_pixel), 1, output);
-    fseek(output, -width*sizeof(rgb_pixel), SEEK_CUR);
+    fwrite(RGB, 3, 1, output);
+    fseek(output, -width*3, SEEK_CUR);
 }
 
 int main( int argc, char *argv[] )
@@ -239,39 +237,53 @@ int main( int argc, char *argv[] )
     rgb_pixel *input_rbg_bl;
     rgb_pixel *input_rbg_br;
 
-    input_rbg_tl = malloc(sizeof(rgb_pixel));
-    input_rbg_tr = malloc(sizeof(rgb_pixel));
-    input_rbg_bl = malloc(sizeof(rgb_pixel));
-    input_rbg_br = malloc(sizeof(rgb_pixel));
+    input_rbg_tl = malloc(3);
+    input_rbg_tr = malloc(3);
+    input_rbg_bl = malloc(3);
+    input_rbg_br = malloc(3);
 
     ycc_compressed *output_ycc;
     rgb_pixel *output_rgb;
 
-    // printf("Size of RGB: %d\n", sizeof(rgb_pixel) );
-    int iterations = header->Width * header->Height;
-
+    // int iterations = header->Width * header->Height;
     int width = header->Width;
     int height = header->Height;
 
-    for (int i = width; i; i-=2){
-        for (int j = height; j; j-=2){
-
+    for (register int i = width; i!=0; i-=4){   
+        for (register int j = height; j!=0; j-=2){
             //Read 4 rgb pixels for downsampling
-            fread(input_rbg_tl, sizeof(rgb_pixel), 1, fInput);
-            fread(input_rbg_tr, sizeof(rgb_pixel), 1, fInput);
-            fseek(fInput, sizeof(rgb_pixel)*width, SEEK_CUR);
-            fread(input_rbg_bl, sizeof(rgb_pixel), 1, fInput);
-            fread(input_rbg_br, sizeof(rgb_pixel), 1, fInput);
-            fseek(fInput, -sizeof(rgb_pixel)*width, SEEK_CUR);
+            fread(input_rbg_tl, 3, 1, fInput);
+            fread(input_rbg_tr, 3, 1, fInput);
+            fseek(fInput, 3*width, SEEK_CUR);
+            fread(input_rbg_bl, 3, 1, fInput);
+            fread(input_rbg_br, 3, 1, fInput);
+            fseek(fInput, -3*width, SEEK_CUR);
 
             output_ycc = downsampleRGBtoYCC(input_rbg_tl, input_rbg_tr, input_rbg_bl, input_rbg_br);
             upsampleYCCtoRGB(output_ycc,rgbOutputFile, width);
 
             //Write YCC
-            fwrite(output_ycc, sizeof(ycc_compressed), 1, yccOutputFile);
+            fwrite(output_ycc, 6, 1, yccOutputFile);
+
+            //Read 4 rgb pixels for downsampling
+            fread(input_rbg_tl, 3, 1, fInput);
+            fread(input_rbg_tr, 3, 1, fInput);
+            fseek(fInput, 3*width, SEEK_CUR);
+            fread(input_rbg_bl, 3, 1, fInput);
+            fread(input_rbg_br, 3, 1, fInput);
+            fseek(fInput, -3*width, SEEK_CUR);
+
+            output_ycc = downsampleRGBtoYCC(input_rbg_tl, input_rbg_tr, input_rbg_bl, input_rbg_br);
+            upsampleYCCtoRGB(output_ycc,rgbOutputFile, width);
+
+            //Write YCC
+            fwrite(output_ycc, 6, 1, yccOutputFile);
+
         }
     }
     fclose(fInput);
     fclose(yccOutputFile);
     fclose(rgbOutputFile);
+
+    return 0;
 }
