@@ -162,18 +162,16 @@ void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
     int Crp2 = (3409969 * Crp);
     int Cbp1 = (1639973 * Cbp);
     int Cbp2 = (8464105 * Cbp);
-    int Crp2MinusCbp1 = Crp2 - Cbp1;
-
 
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
 
     fwrite(RGB, 3, 1, output);
 
     Yp = 4882170 * (input->y_tr - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
     fwrite(RGB, 3, 1, output);
 
@@ -181,13 +179,13 @@ void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
 
     Yp = 4882170 * (input->y_bl - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
     fwrite(RGB, 3, 1, output);
 
     Yp = 4882170 * (input->y_br - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
     fwrite(RGB, 3, 1, output);
     fseek(output, -width*3, SEEK_CUR);
