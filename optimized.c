@@ -138,7 +138,7 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     return YCC;
 }
 
-int myRound(float input)
+int myRound(int input)
 {
   if(input > 255)
   {
@@ -152,7 +152,7 @@ int myRound(float input)
   }
 }
 
-rgb_pixel *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
+void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
 {
     rgb_pixel *RGB = malloc(sizeof(rgb_pixel));
 
@@ -253,8 +253,8 @@ int main( int argc, char *argv[] )
     int width = header->Width;
     int height = header->Height;
 
-    for (int i = width; i; i-=2){
-        for (int j = height; j; j-=2){
+    for (int i = width; i; i-=4){
+        for (int j = height; j; j-=4){
 
             //Read 4 rgb pixels for downsampling
             fread(input_rbg_tl, sizeof(rgb_pixel), 1, fInput);
@@ -269,9 +269,26 @@ int main( int argc, char *argv[] )
 
             //Write YCC
             fwrite(output_ycc, sizeof(ycc_compressed), 1, yccOutputFile);
+
+            //Read 4 rgb pixels for downsampling
+            fread(input_rbg_tl, sizeof(rgb_pixel), 1, fInput);
+            fread(input_rbg_tr, sizeof(rgb_pixel), 1, fInput);
+            fseek(fInput, sizeof(rgb_pixel)*width, SEEK_CUR);
+            fread(input_rbg_bl, sizeof(rgb_pixel), 1, fInput);
+            fread(input_rbg_br, sizeof(rgb_pixel), 1, fInput);
+            fseek(fInput, -sizeof(rgb_pixel)*width, SEEK_CUR);
+
+            output_ycc = downsampleRGBtoYCC(input_rbg_tl, input_rbg_tr, input_rbg_bl, input_rbg_br);
+            upsampleYCCtoRGB(output_ycc,rgbOutputFile, width);
+
+            //Write YCC
+            fwrite(output_ycc, sizeof(ycc_compressed), 1, yccOutputFile);
+
         }
     }
     fclose(fInput);
     fclose(yccOutputFile);
     fclose(rgbOutputFile);
+
+    return 0;
 }

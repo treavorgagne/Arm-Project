@@ -152,7 +152,7 @@ int myRound(float input)
   }
 }
 
-rgb_pixel *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
+void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
 {
     rgb_pixel *RGB = malloc(sizeof(rgb_pixel));
 
@@ -265,4 +265,6 @@ int main( int argc, char *argv[] )
     fclose(fInput);
     fclose(yccOutputFile);
     fclose(rgbOutputFile);
+
+    return 0;
 }
