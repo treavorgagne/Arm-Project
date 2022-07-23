@@ -137,7 +137,7 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     return YCC;
 }
 
-int myRound(int input)
+int myRound(register int input)
 {
   if(input > 255)
   {
@@ -162,17 +162,18 @@ void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
     int Crp2 = (3409969 * Crp);
     int Cbp1 = (1639973 * Cbp);
     int Cbp2 = (8464105 * Cbp);
+    int Crp2MinusCbp1 = Crp2 - Cbp1;
 
 
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
 
     fwrite(RGB, 3, 1, output);
 
     Yp = 4882170 * (input->y_tr - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
     fwrite(RGB, 3, 1, output);
 
@@ -180,13 +181,13 @@ void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
 
     Yp = 4882170 * (input->y_bl - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
     fwrite(RGB, 3, 1, output);
 
     Yp = 4882170 * (input->y_br - 16);
     RGB->red = myRound((Yp + Crp1) >> 22);
-    RGB->green = myRound((Yp - Crp2 - Cbp1) >> 22);
+    RGB->green = myRound((Yp - Crp2MinusCbp1) >> 22);
     RGB->blue = myRound((Yp + Cbp2) >> 22);
     fwrite(RGB, 3, 1, output);
     fseek(output, -width*3, SEEK_CUR);
@@ -246,14 +247,12 @@ int main( int argc, char *argv[] )
     ycc_compressed *output_ycc;
     rgb_pixel *output_rgb;
 
-    int iterations = header->Width * header->Height;
-
+    // int iterations = header->Width * header->Height;
     int width = header->Width;
     int height = header->Height;
 
-    for (int i = width; i!=0; i-=4){
-        for (int j = height; j!=0; j-=2){
-
+    for (register int i = width; i!=0; i-=4){   
+        for (register int j = height; j!=0; j-=2){
             //Read 4 rgb pixels for downsampling
             fread(input_rbg_tl, 3, 1, fInput);
             fread(input_rbg_tr, 3, 1, fInput);
