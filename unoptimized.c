@@ -17,8 +17,8 @@ typedef struct ycc_pixel
     uint8_t cr;
 } ycc_pixel;
 
-typedef struct ycc_compressed 
-{ 
+typedef struct ycc_compressed
+{
     uint8_t y_tl;
     uint8_t y_tr;
     uint8_t y_bl;
@@ -45,7 +45,7 @@ typedef struct file_header
     uint32_t Compression;
     uint32_t SizeImage;
     uint32_t XPixelsPerMeter; // X PIXEL PER METER
-    uint32_t YPixelsPerMeter; 
+    uint32_t YPixelsPerMeter;
     uint32_t ClrUsed;
     uint32_t ClrImportant;
 
@@ -106,25 +106,25 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     float y_tr = (float)(16 + (0.257 * input_tr->red) + (0.504 * input_tr->green) + (0.098 * input_tr->blue));
     float y_bl = (float)(16 + (0.257 * input_bl->red) + (0.504 * input_bl->green) + (0.098 * input_bl->blue));
     float y_br = (float)(16 + (0.257 * input_br->red) + (0.504 * input_br->green) + (0.098 * input_br->blue));
-    
+
     float cb_tl = (float)(128 + (-0.148 * input_tl->red) - (0.291 * input_tl->green) + (0.439 * input_tl->blue));
     float cr_tl = (float)(128 + (0.439 * input_tl->red) - (0.368 * input_tl->green) - (0.071 * input_tl->blue));
-    
+
     float cb_tr = (float)(128 + (-0.148 * input_tr->red) - (0.291 * input_tr->green) + (0.439 * input_tr->blue));
     float cr_tr = (float)(128 + (0.439 * input_tr->red) - (0.368 * input_tr->green) - (0.071 * input_tr->blue));
 
-    float cb_bl = (float)(128 + (-0.148 * input_bl->red) - (0.291 * input_bl->green) + (0.439 * input_bl->blue));;
+    float cb_bl = (float)(128 + (-0.148 * input_bl->red) - (0.291 * input_bl->green) + (0.439 * input_bl->blue));
+    ;
     float cr_bl = (float)(128 + (0.439 * input_bl->red) - (0.368 * input_bl->green) - (0.071 * input_bl->blue));
 
     float cb_br = (float)(128 + (-0.148 * input_br->red) - (0.291 * input_br->green) + (0.439 * input_br->blue));
     float cr_br = (float)(128 + (0.439 * input_br->red) - (0.368 * input_br->green) - (0.071 * input_br->blue));
 
-
     // Calculate Average
     float cb = (cb_tl + cb_tr + cb_bl + cb_br) / 4;
     float cr = (cr_tl + cr_tr + cr_bl + cr_br) / 4;
 
-    // Drop samples 
+    // Drop samples
     // int cb = cb_tl;
     // int cr = cr_tl;
 
@@ -140,16 +140,18 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
 
 int myRound(float input)
 {
-  if(input > 255)
-  {
-    return 255;
-  } else if (input < 0) 
-  {
-    return 0;
-  } else 
-  {
-    return (uint8_t)input;
-  }
+    if (input > 255)
+    {
+        return 255;
+    }
+    else if (input < 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return (uint8_t)input;
+    }
 }
 
 void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
@@ -171,7 +173,7 @@ void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
     RGB->blue = myRound((1.164 * Yp) + (2.018 * Cbp));
     fwrite(RGB, sizeof(rgb_pixel), 1, output);
 
-    fseek(output, width*sizeof(rgb_pixel), SEEK_CUR);
+    fseek(output, width * sizeof(rgb_pixel), SEEK_CUR);
 
     Yp = input->y_bl - 16;
     RGB->red = myRound((1.164 * Yp) + (1.596 * Crp));
@@ -184,21 +186,22 @@ void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
     RGB->green = myRound((1.164 * Yp) - (0.813 * Crp) - (0.391 * Cbp));
     RGB->blue = myRound((1.164 * Yp) + (2.018 * Cbp));
     fwrite(RGB, sizeof(rgb_pixel), 1, output);
-    fseek(output, -width*sizeof(rgb_pixel), SEEK_CUR);
+    fseek(output, -width * sizeof(rgb_pixel), SEEK_CUR);
 }
 
-int main( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
 
     // exit program if not enough or to much input files was supplied.
-    if (argc != 4) {
+    if (argc != 4)
+    {
         printf("Please provide the correct arguments for RGB to YCC conversion.\n");
         exit(1);
     }
-    
+
     // open file in binary read mode
     FILE *fInput;
-    if ((fInput = fopen(argv[1], "rb")) == NULL)
+    if ((fInput = fopen("images/shapes.bmp", "rb")) == NULL)
     {
         printf("Error! Opening input file\n");
         exit(1);
@@ -207,12 +210,12 @@ int main( int argc, char *argv[] )
     // open files for writing the output
     FILE *yccOutputFile;
     FILE *rgbOutputFile;
-    if ((yccOutputFile = fopen(argv[2], "wb")) == NULL)
+    if ((yccOutputFile = fopen("output/yccout.bmp", "wb")) == NULL)
     {
         printf("Error! Opening Output file\n");
         exit(1);
     }
-    if ((rgbOutputFile = fopen(argv[3], "wb")) == NULL)
+    if ((rgbOutputFile = fopen("output/rgbout.bmp", "wb")) == NULL)
     {
         printf("Error! Opening Output file\n");
         exit(1);
@@ -244,21 +247,23 @@ int main( int argc, char *argv[] )
     int width = header->Width;
     int height = header->Height;
 
-    for (int i = 0; i < width; i+=2){
-        for (int j = 0; j < height; j+=2){
+    for (int i = 0; i < width; i += 2)
+    {
+        for (int j = 0; j < height; j += 2)
+        {
 
-            //Read 4 rgb pixels for downsampling
+            // Read 4 rgb pixels for downsampling
             fread(input_rbg_tl, sizeof(rgb_pixel), 1, fInput);
             fread(input_rbg_tr, sizeof(rgb_pixel), 1, fInput);
-            fseek(fInput, sizeof(rgb_pixel)*width, SEEK_CUR);
+            fseek(fInput, sizeof(rgb_pixel) * width, SEEK_CUR);
             fread(input_rbg_bl, sizeof(rgb_pixel), 1, fInput);
             fread(input_rbg_br, sizeof(rgb_pixel), 1, fInput);
-            fseek(fInput, -sizeof(rgb_pixel)*width, SEEK_CUR);
+            fseek(fInput, -sizeof(rgb_pixel) * width, SEEK_CUR);
 
             output_ycc = downsampleRGBtoYCC(input_rbg_tl, input_rbg_tr, input_rbg_bl, input_rbg_br);
-            upsampleYCCtoRGB(output_ycc,rgbOutputFile, width);
+            upsampleYCCtoRGB(output_ycc, rgbOutputFile, width);
 
-            //Write YCC
+            // Write YCC
             fwrite(output_ycc, sizeof(ycc_compressed), 1, yccOutputFile);
         }
     }
