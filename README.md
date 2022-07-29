@@ -31,11 +31,11 @@ python(3) test_bench.py
 # Gprof Process
 
 ```
-gcc -O0 -pg unoptimized.c -o unopt.out
+gcc -marm -O0 -pg unoptimized.c -o unopt.out
 ./unopt.out
 gprof -p -b unopt.out gmon.out > unoptimized-gprof.txt
 
-gcc -O1 -pg optimized.c -o opt.out
+gcc -marm -O0 -pg optimized.c -o opt.out
 ./opt.out
 gprof -p -b opt.out gmon.out > optimized-gprof.txt
 ```
