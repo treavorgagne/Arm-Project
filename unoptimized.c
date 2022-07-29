@@ -193,11 +193,11 @@ int main(int argc, char *argv[])
 {
 
     // exit program if not enough or to much input files was supplied.
-    if (argc != 4)
-    {
-        printf("Please provide the correct arguments for RGB to YCC conversion.\n");
-        exit(1);
-    }
+    // if (argc != 4)
+    // {
+    //     printf("Please provide the correct arguments for RGB to YCC conversion.\n");
+    //     exit(1);
+    // }
 
     // open file in binary read mode
     FILE *fInput;
