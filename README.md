@@ -30,6 +30,20 @@ python(3) test_bench.py
 
 # Gprof Process
 
+Downsampling with discarding
+
+```
+gcc -marm -O0 -pg unoptimized.c -o unopt.out
+./unopt.out
+gprof -p -b unopt.out gmon.out > unoptimized-discard-gprof.txt
+
+gcc -marm -O0 -pg optimized.c -o opt.out
+./opt.out
+gprof -p -b opt.out gmon.out > optimized-discard-gprof.txt
+```
+
+Downsampling with Averaging
+
 ```
 gcc -marm -O0 -pg unoptimized.c -o unopt.out
 ./unopt.out

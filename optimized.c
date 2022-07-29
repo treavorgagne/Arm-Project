@@ -119,12 +119,12 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     int cr_br = (128 + (((28770 * input_br->red) - (24117 * input_br->green) - (4653 * input_br->blue)) >> 16));
 
     // Calculate Average
-    // int cb = (cb_tl + cb_tr + cb_bl + cb_br) >> 2;
-    // int cr = (cr_tl + cr_tr + cr_bl + cr_br) >> 2;
+    int cb = (cb_tl + cb_tr + cb_bl + cb_br) >> 2;
+    int cr = (cr_tl + cr_tr + cr_bl + cr_br) >> 2;
 
     // Drop samples
-    int cb = cb_tl;
-    int cr = cr_tl;
+    // int cb = cb_tl;
+    // int cr = cr_tl;
 
     YCC->y_tl = (uint8_t)y_tl;
     YCC->y_tr = (uint8_t)y_tr;
@@ -196,15 +196,15 @@ int main(int argc, char *argv[])
 {
 
     // exit program if not enough or to much input files was supplied.
-    // if (argc != 4)
-    // {
-    //     printf("Please provide the correct arguments for RGB to YCC conversion.\n");
-    //     exit(1);
-    // }
+    if (argc != 4)
+    {
+        printf("Please provide the correct arguments for RGB to YCC conversion.\n");
+        exit(1);
+    }
 
     // open file in binary read mode
     FILE *fInput;
-    if ((fInput = fopen("images/shapes.bmp", "rb")) == NULL)
+    if ((fInput = fopen(argv[1], "rb")) == NULL)
     {
         printf("Error! Opening input file\n");
         exit(1);
@@ -213,12 +213,12 @@ int main(int argc, char *argv[])
     // open files for writing the output
     FILE *yccOutputFile;
     FILE *rgbOutputFile;
-    if ((yccOutputFile = fopen("output/yccout.bmp", "wb")) == NULL)
+    if ((yccOutputFile = fopen(argv[2], "wb")) == NULL)
     {
         printf("Error! Opening Output file\n");
         exit(1);
     }
-    if ((rgbOutputFile = fopen("output/rgbout.bmp", "wb")) == NULL)
+    if ((rgbOutputFile = fopen(argv[3], "wb")) == NULL)
     {
         printf("Error! Opening Output file\n");
         exit(1);
