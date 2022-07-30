@@ -193,15 +193,15 @@ int main(int argc, char *argv[])
 {
 
     // exit program if not enough or to much input files was supplied.
-    if (argc != 4)
-    {
-        printf("Please provide the correct arguments for RGB to YCC conversion.\n");
-        exit(1);
-    }
+    // if (argc != 4)
+    // {
+    //     printf("Please provide the correct arguments for RGB to YCC conversion.\n");
+    //     exit(1);
+    // }
 
     // open file in binary read mode
     FILE *fInput;
-    if ((fInput = fopen(argv[1], "rb")) == NULL)
+    if ((fInput = fopen("images/shapes.bmp", "rb")) == NULL)
     {
         printf("Error! Opening input file\n");
         exit(1);
@@ -210,15 +210,16 @@ int main(int argc, char *argv[])
     // open files for writing the output
     FILE *yccOutputFile;
     FILE *rgbOutputFile;
-    if ((yccOutputFile = fopen(argv[2], "wb")) == NULL)
+    if ((yccOutputFile = fopen("output/yccout.bmp", "wb")) == NULL)
     {
         printf("Error! Opening Output file\n");
         exit(1);
     }
-    if ((rgbOutputFile = fopen(argv[3], "wb")) == NULL)
+    if ((rgbOutputFile = fopen("output/rgbout.bmp", "wb")) == NULL)
     {
         printf("Error! Opening Output file\n");
         exit(1);
+    }xit(1);
     }
 
     file_header *header;
