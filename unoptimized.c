@@ -192,7 +192,7 @@ void *upsampleYCCtoRGB(ycc_compressed *input, FILE *output, int width)
 int main(int argc, char *argv[])
 {
 
-    // exit program if not enough or to much input files was supplied.
+// exit program if not enough or to much input files was supplied.
     // if (argc != 4)
     // {
     //     printf("Please provide the correct arguments for RGB to YCC conversion.\n");
@@ -219,7 +219,6 @@ int main(int argc, char *argv[])
     {
         printf("Error! Opening Output file\n");
         exit(1);
-    }xit(1);
     }
 
     file_header *header;
