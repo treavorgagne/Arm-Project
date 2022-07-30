@@ -109,22 +109,22 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     int cb_tl = (128 + (((-9699 * input_tl->red) - (19071 * input_tl->green) + (28770 * input_tl->blue)) >> 16));
     int cr_tl = (128 + (((28770 * input_tl->red) - (24117 * input_tl->green) - (4653 * input_tl->blue)) >> 16));
 
-    int cb_tr = (128 + (((-9699 * input_tr->red) - (19071 * input_tr->green) + (28770 * input_tr->blue)) >> 16));
-    int cr_tr = (128 + (((28770 * input_tr->red) - (24117 * input_tr->green) - (4653 * input_tr->blue)) >> 16));
+    // int cb_tr = (128 + (((-9699 * input_tr->red) - (19071 * input_tr->green) + (28770 * input_tr->blue)) >> 16));
+    // int cr_tr = (128 + (((28770 * input_tr->red) - (24117 * input_tr->green) - (4653 * input_tr->blue)) >> 16));
 
-    int cb_bl = (128 + (((-9699 * input_bl->red) - (19071 * input_bl->green) + (28770 * input_bl->blue)) >> 16));
-    int cr_bl = (128 + (((28770 * input_bl->red) - (24117 * input_bl->green) - (4653 * input_bl->blue)) >> 16));
+    // int cb_bl = (128 + (((-9699 * input_bl->red) - (19071 * input_bl->green) + (28770 * input_bl->blue)) >> 16));
+    // int cr_bl = (128 + (((28770 * input_bl->red) - (24117 * input_bl->green) - (4653 * input_bl->blue)) >> 16));
 
-    int cb_br = (128 + (((-9699 * input_br->red) - (19071 * input_br->green) + (28770 * input_br->blue)) >> 16));
-    int cr_br = (128 + (((28770 * input_br->red) - (24117 * input_br->green) - (4653 * input_br->blue)) >> 16));
+    // int cb_br = (128 + (((-9699 * input_br->red) - (19071 * input_br->green) + (28770 * input_br->blue)) >> 16));
+    // int cr_br = (128 + (((28770 * input_br->red) - (24117 * input_br->green) - (4653 * input_br->blue)) >> 16));
 
     // Calculate Average
-    int cb = (cb_tl + cb_tr + cb_bl + cb_br) >> 2;
-    int cr = (cr_tl + cr_tr + cr_bl + cr_br) >> 2;
+    // int cb = (cb_tl + cb_tr + cb_bl + cb_br) >> 2;
+    // int cr = (cr_tl + cr_tr + cr_bl + cr_br) >> 2;
 
     // Drop samples
-    // int cb = cb_tl;
-    // int cr = cr_tl;
+    int cb = cb_tl;
+    int cr = cr_tl;
 
     YCC->y_tl = (uint8_t)y_tl;
     YCC->y_tr = (uint8_t)y_tr;
