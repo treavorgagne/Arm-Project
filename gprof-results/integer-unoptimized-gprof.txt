@@ -3,9 +3,9 @@ Flat profile:
 Each sample counts as 0.01 seconds.
   %   cumulative   self              self     total           
  time   seconds   seconds    calls  us/call  us/call  name    
- 41.70      0.05     0.05    20000     2.50     4.00  upsampleYCCtoRGB
- 25.02      0.08     0.03    20000     1.50     1.50  downsampleRGBtoYCC
- 25.02      0.11     0.03   240000     0.13     0.13  myRound
-  8.34      0.12     0.01                             main
-  0.00      0.12     0.00        2     0.00     0.00  write_header
-  0.00      0.12     0.00        1     0.00     0.00  bmp_init
+ 42.14      0.08     0.08    20000     4.00     4.00  downsampleRGBtoYCC
+ 31.61      0.14     0.06                             main
+ 15.80      0.17     0.03    20000     1.50     2.50  upsampleYCCtoRGB
+ 10.54      0.19     0.02   240000     0.08     0.08  myRound
+  0.00      0.19     0.00        2     0.00     0.00  write_header
+  0.00      0.19     0.00        1     0.00     0.00  bmp_init

@@ -37,6 +37,10 @@ gcc -marm -O0 -pg unoptimized.c -o unopt.out
 ./unopt.out
 gprof -p -b unopt.out gmon.out > unoptimized-discard-gprof.txt
 
+gcc -marm -O0 -pg integer-unoptimized.c -o intUnopt.out
+./intUnopt.out
+gprof -p -b intUnopt.out gmon.out > integer-unoptimized-discard-gprof.txt
+
 gcc -marm -O0 -pg optimized.c -o opt.out
 ./opt.out
 gprof -p -b opt.out gmon.out > optimized-discard-gprof.txt
@@ -48,6 +52,10 @@ Downsampling with Averaging
 gcc -marm -O0 -pg unoptimized.c -o unopt.out
 ./unopt.out
 gprof -p -b unopt.out gmon.out > unoptimized-gprof.txt
+
+gcc -marm -O0 -pg integer-unoptimized.c -o intUnopt.out
+./intUnopt.out
+gprof -p -b intUnopt.out gmon.out > integer-unoptimized-gprof.txt
 
 gcc -marm -O0 -pg optimized.c -o opt.out
 ./opt.out
