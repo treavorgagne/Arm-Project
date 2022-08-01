@@ -96,9 +96,9 @@ void write_header(file_header *header, FILE *output_file)
     fwrite(&header->ClrImportant, 4, 1, output_file);
 }
 
-int hardware_Y(int red, int green, int blue){
+uint8_t hardware_Y(uint8_t red, uint8_t green, uint8_t blue){
 
-    int Y;
+    uint8_t Y;
     __asm__ __volatile__ (
         "Y_hw\t%0, %1, %2, %3\n"
         : "=r" (Y)
@@ -107,9 +107,9 @@ int hardware_Y(int red, int green, int blue){
     return Y;
 }
 
-int hardware_Cr(int red, int green, int blue){
+uint8_t hardware_Cr(uint8_t red, uint8_t green, uint8_t blue){
 
-    int Cr;
+    uint8_t Cr;
     __asm__ __volatile__ (
         "Cr_hw\t%0, %1, %2, %3\n"
         : "=r" (Cr)
@@ -118,9 +118,9 @@ int hardware_Cr(int red, int green, int blue){
     return Cr;
 }
 
-int hardware_Cb(int red, int green, int blue){
+uint8_t hardware_Cb(uint8_t red, uint8_t green, uint8_t blue){
 
-    int Cb;
+    uint8_t Cb;
     __asm__ __volatile__ (
         "Cb_hw\t%0, %1, %2, %3\n"
         : "=r" (Cb)
@@ -134,37 +134,26 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     ycc_compressed *YCC = malloc(3);
 
     // extract ys and cs
-    int y_tl = hardware_Y(input_tl->red, input_tl->green, input_tl->blue);
-    int y_tr = hardware_Y(input_tr->red, input_tr->green, input_tr->blue);
-    int y_bl = hardware_Y(input_bl->red, input_bl->green, input_bl->blue);
-    int y_br = hardware_Y(input_br->red, input_br->green, input_br->blue);
+    YCC->y_tl = hardware_Y(input_tl->red, input_tl->green, input_tl->blue);
+    YCC->y_tr = hardware_Y(input_tr->red, input_tr->green, input_tr->blue);
+    YCC->y_bl  = hardware_Y(input_bl->red, input_bl->green, input_bl->blue);
+    YCC->y_br = hardware_Y(input_br->red, input_br->green, input_br->blue);
 
-    int cb_tl = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
-    int cr_tl = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cb_tl = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cr_tl = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
 
-    int cb_tr = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
-    int cr_tr = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cb_tr = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cr_tr = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
 
-    int cb_bl = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
-    int cr_bl = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cb_bl = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cr_bl = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
 
-    int cb_br = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
-    int cr_br = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cb_br = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cr_br = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
 
     // Calculate Average
-    int cb = (cb_tl + cb_tr + cb_bl + cb_br) >> 2;
-    int cr = (cr_tl + cr_tr + cr_bl + cr_br) >> 2;
-
-    // Drop samples
-    // int cb = cb_tl;
-    // int cr = cr_tl;
-
-    YCC->y_tl = (uint8_t)y_tl;
-    YCC->y_tr = (uint8_t)y_tr;
-    YCC->y_bl = (uint8_t)y_bl;
-    YCC->y_br = (uint8_t)y_br;
-    YCC->cb = (uint8_t)cb;
-    YCC->cr = (uint8_t)cr;
+    YCC->cb = (cb_tl + cb_tr + cb_bl + cb_br) >> 2;
+    YCC->cr = (cr_tl + cr_tr + cr_bl + cr_br) >> 2;
 
     return YCC;
 }
