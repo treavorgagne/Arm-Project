@@ -119,8 +119,8 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     int cr_br = (128 + (((28770 * input_br->red) - (24117 * input_br->green) - (4653 * input_br->blue)) >> 16));
 
     // Calculate Average
-    int cb = (cb_tl + cb_tr + cb_bl + cb_br) / 4;
-    int cr = (cr_tl + cr_tr + cr_bl + cr_br) / 4;
+    int cb = (cb_tl + cb_tr + cb_bl + cb_br) >> 2;
+    int cr = (cr_tl + cr_tr + cr_bl + cr_br) >> 2;
 
     // Drop samples
     // int cb = cb_tl;
