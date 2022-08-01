@@ -100,7 +100,7 @@ int hardware_Y(int red, int green, int blue){
 
     int Y;
     __asm__ __volatile__ (
-        "Y_hw\n%0, %1, %2, %3\n"
+        "Y_hw\t%0, %1, %2, %3\n"
         : "=r" (Y)
         : "r" (red), "r" (green), "r" (blue)
     );
@@ -111,7 +111,7 @@ int hardware_Cr(int red, int green, int blue){
 
     int Cr;
     __asm__ __volatile__ (
-        "Cr_hw\n%0, %1, %2, %3\n"
+        "Cr_hw\t%0, %1, %2, %3\n"
         : "=r" (Cr)
         : "r" (red), "r" (green), "r" (blue)
     );
@@ -122,7 +122,7 @@ int hardware_Cb(int red, int green, int blue){
 
     int Cb;
     __asm__ __volatile__ (
-        "Cb_hw\n%0, %1, %2, %3\n"
+        "Cb_hw\t%0, %1, %2, %3\n"
         : "=r" (Cb)
         : "r" (red), "r" (green), "r" (blue)
     );
