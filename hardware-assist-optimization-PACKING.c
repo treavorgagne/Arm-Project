@@ -96,35 +96,42 @@ void write_header(file_header *header, FILE *output_file)
     fwrite(&header->ClrImportant, 4, 1, output_file);
 }
 
-uint8_t hardware_Y(uint8_t red, uint8_t green, uint8_t blue){
+uint32_t PackRBG(uint8_t red, uint8_t green, uint8_t blue){
+    uint32_t RBG = (red << 16);
+    RBG = RBG + (green << 8);
+    RBG = RBG + blue;
+    return RBG;
+}
+
+uint8_t hardware_Y(uint32_t RGB){
 
     uint8_t Y;
     __asm__ __volatile__ (
-        "Y_hw\t%0, %1, %2, %3\n"
+        "Y_hw\t%0, %1\n"
         : "=r" (Y)
-        : "r" (red), "r" (green), "r" (blue)
+        : "r" (RGB)
     );
     return Y;
 }
 
-uint8_t hardware_Cr(uint8_t red, uint8_t green, uint8_t blue){
+uint8_t hardware_Cr(uint32_t RGB){
 
     uint8_t Cr;
     __asm__ __volatile__ (
-        "Cr_hw\t%0, %1, %2, %3\n"
+        "Cr_hw\t%0, %1\n"
         : "=r" (Cr)
-        : "r" (red), "r" (green), "r" (blue)
+        : "r" (RGB)
     );
     return Cr;
 }
 
-uint8_t hardware_Cb(uint8_t red, uint8_t green, uint8_t blue){
+uint8_t hardware_Cb(uint32_t RGB){
 
     uint8_t Cb;
     __asm__ __volatile__ (
-        "Cb_hw\t%0, %1, %2, %3\n"
+        "Cb_hw\t%0, %1\n"
         : "=r" (Cb)
-        : "r" (red), "r" (green), "r" (blue)
+        : "r" (RGB)
     );
     return Cb;
 }
@@ -134,26 +141,26 @@ ycc_compressed *downsampleRGBtoYCC(rgb_pixel *input_tl, rgb_pixel *input_tr, rgb
     ycc_compressed *YCC = malloc(3);
 
     // extract ys and cs
-    YCC->y_tl = hardware_Y(input_tl->red, input_tl->green, input_tl->blue);
-    YCC->y_tr = hardware_Y(input_tr->red, input_tr->green, input_tr->blue);
-    YCC->y_bl  = hardware_Y(input_bl->red, input_bl->green, input_bl->blue);
-    YCC->y_br = hardware_Y(input_br->red, input_br->green, input_br->blue);
+    YCC->y_tl = hardware_Y(PackRBG(input_tl->red, input_tl->green, input_tl->blue));
+    YCC->y_tr = hardware_Y(PackRBG(input_tr->red, input_tr->green, input_tr->blue));
+    YCC->y_bl  = hardware_Y(PackRBG(input_bl->red, input_bl->green, input_bl->blue));
+    YCC->y_br = hardware_Y(PackRBG(input_br->red, input_br->green, input_br->blue));
 
-    uint8_t cb_tl = hardware_Cb(input_tl->red, input_tl->green, input_tl->blue);
-    uint8_t cr_tl = hardware_Cr(input_tl->red, input_tl->green, input_tl->blue);
+    uint8_t cb_tl = hardware_Cb(PackRBG(input_tl->red, input_tl->green, input_tl->blue));
+    uint8_t cr_tl = hardware_Cr(PackRBG(input_tl->red, input_tl->green, input_tl->blue));
 
-    uint8_t cb_tr = hardware_Cb(input_tr->red, input_tr->green, input_tr->blue);
-    uint8_t cr_tr = hardware_Cr(input_tr->red, input_tr->green, input_tr->blue);
+    uint8_t cb_tr = hardware_Cb(PackRBG(input_tr->red, input_tr->green, input_tr->blue));
+    uint8_t cr_tr = hardware_Cr(PackRBG(input_tr->red, input_tr->green, input_tr->blue));
 
-    uint8_t cb_bl = hardware_Cb(input_bl->red, input_bl->green, input_bl->blue);
-    uint8_t cr_bl = hardware_Cr(input_bl->red, input_bl->green, input_bl->blue);
+    uint8_t cb_bl = hardware_Cb(PackRBG(input_bl->red, input_bl->green, input_bl->blue));
+    uint8_t cr_bl = hardware_Cr(PackRBG(input_bl->red, input_bl->green, input_bl->blue));
 
-    uint8_t cb_br = hardware_Cb(input_br->red, input_br->green, input_br->blue);
-    uint8_t cr_br = hardware_Cr(input_br->red, input_br->green, input_br->blue);
+    uint8_t cb_br = hardware_Cb(PackRBG(input_br->red, input_br->green, input_br->blue));
+    uint8_t cr_br = hardware_Cr(PackRBG(input_br->red, input_br->green, input_br->blue));
 
     // Calculate Average
-    YCC->cb = (cb_tl + cb_tr + cb_bl + cb_br + 2) >> 2;
-    YCC->cr = (cr_tl + cr_tr + cr_bl + cr_br + 2) >> 2;
+    int cb = (cb_tl + cb_tr + cb_bl + cb_br + 2) >> 2;
+    int cr = (cr_tl + cr_tr + cr_bl + cr_br + 2) >> 2;
 
     return YCC;
 }
